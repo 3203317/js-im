@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+  <head>
+    <title>chat</title>
+    <meta charset='utf-8' />
+    <meta name='author' content='3203317@qq.com,新' />
+  </head>
+  <body>
+    chat
+  </body>
+
+  <script type='text/javascript'>
+    var config = {
+      waitSeconds: 0,
+      locale: location.search.match(/locale=([\w\-]+)/) ? RegExp.$1 : 'zh',
+      paths: {
+        underscore: 'http://www.foreworld.net/js/underscore/1.8.3/underscore.min.js?',
+        jquery: 'http://www.foreworld.net/js/jquery/2.0.2/jquery.min.js?v2.0.2',
+        actor: './actor'
+      }
+    };
+  </script>
+
+  <script defer async='true' data-main='./im/im' src='http://www.foreworld.net/js/requirejs/2.3.3/require.min.js'></script>
+</html>
