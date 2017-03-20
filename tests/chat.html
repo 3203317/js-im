@@ -16,7 +16,14 @@
       paths: {
         underscore: 'http://www.foreworld.net/js/underscore/1.8.3/underscore.min.js?',
         jquery: 'http://www.foreworld.net/js/jquery/2.0.2/jquery.min.js?v2.0.2',
-        actor: './actor'
+      },
+      shim: {
+        actor: {
+          exports: 'actor'
+        }
+      },
+      callback: function(){
+        // console.log(arguments);
       }
     };
   </script>
