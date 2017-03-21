@@ -8,24 +8,25 @@
 var console = console || { log: function(){ return; } };
 require.config(config);
 
-var fn = function($, _, im){
-  // console.log('----');
-  // console.log($)
-  // console.log(_.min([10, 5, 100, 2, 1000]))
-  // console.log(im)
-  // console.log('----');
-
+var fn = function($, _, IM){
   $(function(){
     $('#login').click(function(){
-      im.login($('#myid').val(), $('#myid').val(), function (uid){
+      IM.login($('#myid').val(), $('#myid').val(), function (uid){
         if(!uid) return;
         console.log(uid);
       });
     });
 
     $('#send').click(function(){
-      im.sendMsg($('#fid').val(), $('#msg').val());
+      IM.sendMsg($('#fid').val(), $('#msg').val());
     });
+
+    $('#isLoggedIn').click(function(){
+      IM.isLoggedIn('1', function (uid){
+        console.log(uid)
+      });
+    });
+
   });
 };
 

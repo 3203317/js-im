@@ -5,50 +5,69 @@
  */
 'use strict';
 
-define(['jquery', 'underscore', 'actor'], function ($, _){
-  var deferred = $.Deferred();
-
-  var _client;
-
-  var _starter = function(){
-    _client = new ActorClient();
-    if(!window.Promise){
-      require(['promise-pollfill'], function(){
-        deferred.resolve(_client);
-      });
-    }else{
-      deferred.resolve(_client);
-    }
-  };
-
-  if(window.isJsAppLoaded){
-    _starter();
-  }else{
-    window.jsAppLoaded = _starter;
-  }
-
-  var ActorClient = function(){
-    var self = this;
-    self.messager = new window.actor.ActorApp();
-    require(['config'], function (config){
-      self.messager.init(config);
-    });
-  };
+define(['jquery', 'underscore', 'promise'], function ($, _, promise){
 
   var Model = function(){};
   var pro = Model.prototype;
 
   pro.login = function(pid, pname, cb){
-    console.log(arguments);
-    cb(pid);
+    var self = this;
+
+    self.isLoggedIn(pid, function (uid){
+
+      if(uid){
+        self.loggedIn = true;
+        console.info('缓存登陆');
+        return cb(uid);
+      }
+
+      promise.done(function (client){
+
+        $.get('http://10.0.1.249:9090/v1/tokens/'+ pid, {
+          apiPassword : 'justep-dangchat'
+        }, function (token){
+
+          client.messager.validateToken(pid, pname, token, function (state){
+            console.log(state)
+            console.log('++++')
+          }, function (err){
+            console.error(err)
+          });  // validateToken
+
+        });  // get
+
+      });  // promise
+
+    });
   };
 
-  pro.logout = function(){
-    console.log('logout');
+  pro.logout = function(cb){
+    promise.done(function (client){
+      console.log('logout');
+      cb(true);
+    });
   };
 
-  pro.sendMsg = function(uid, msg){
-    console.log(uid +':'+ msg);
+  pro.sendMsg = function(uid, msg, cb){
+    promise.done(function (client){
+      console.log('sendMsg');
+      cb(true);
+    });
+  };
+
+  pro.isLoggedIn = function(pid, cb){
+    promise.done(function (client){
+      if(client && client.messager.isLoggedIn()){
+        var uid = client.messager.getUid();
+
+        if(uid){
+          var user = client.messager.getUser(uid);
+          return cb((user && user.nick === pid) ? uid : null);
+        }
+      }
+
+      cb(null);
+    });  // promise
   };
 
   return new Model();
