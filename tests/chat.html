@@ -6,11 +6,14 @@
     <meta name='author' content='3203317@qq.com,新' />
   </head>
   <body>
-    chat
+    <p>当前用户：<input id='myid' type='text' value='123456789' /> <button id='login'>登陆</button></p>
+    <p>对方用户：<input id='fid' type='text' value='987654321' /></p>
+    <p>发送内容：<input id='msg' type='text' value='' /> <button id='send'>发送</button></p>
   </body>
 
   <script type='text/javascript'>
     var config = {
+      baseUrl: './im',
       waitSeconds: 0,
       locale: location.search.match(/locale=([\w\-]+)/) ? RegExp.$1 : 'zh',
       paths: {
@@ -18,9 +21,6 @@
         jquery: 'http://www.foreworld.net/js/jquery/2.0.2/jquery.min.js?v2.0.2',
       },
       shim: {
-        actor: {
-          exports: 'actor'
-        }
       },
       callback: function(){
         // console.log(arguments);
