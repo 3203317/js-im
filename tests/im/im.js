@@ -18,34 +18,51 @@ define(['jquery', 'underscore', 'promise'], function ($, _, promise){
       if(uid){
         self.loggedIn = true;
         console.info('缓存登陆');
-        return cb(uid);
+        return cb(null, null, uid);
       }
 
       promise.done(function (client){
 
         $.get('http://10.0.1.249:9090/v1/tokens/'+ pid, {
-          apiPassword : 'justep-dangchat'
+          apiPassword: 'justep-dangchat'
         }, function (token){
 
-          client.messager.validateToken(pid, pname, token, function (state){
-            console.log(state)
-            console.log('++++')
-          }, function (err){
-            console.error(err)
-          });  // validateToken
+          if(!token) return cb(null, 'no token');
+
+          try{
+            client.messager.validateToken(pid, pname, token, function (state){
+
+              switch(state){
+                case 'logged_in':
+                  var uid = client.messager.getUid();
+                  if(uid){
+                    self.loggedIn = true;
+                    return cb(null, null, uid);
+                  }
+
+                  self.logout();
+                  cb(null, '注册失败');
+                  break;
+                case 'signup': return cb(null, '注册不支持的');
+                default: return cb(null, '不支持的返回值');
+              }
+
+            }, function (err){
+              cb(err);
+            });  // validateToken
+          }catch(ex){
+            cb(err);
+          }  // try
 
         });  // get
 
       });  // promise
 
-    });
+    });  // isLoggedIn
   };
 
-  pro.logout = function(cb){
-    promise.done(function (client){
-      console.log('logout');
-      cb(true);
-    });
+  pro.logout = function(){
+    if(localStorage) localStorage.clear();
   };
 
   pro.sendMsg = function(uid, msg, cb){

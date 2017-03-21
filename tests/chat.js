@@ -11,8 +11,9 @@ require.config(config);
 var fn = function($, _, IM){
   $(function(){
     $('#login').click(function(){
-      IM.login($('#myid').val(), $('#myid').val(), function (uid){
-        if(!uid) return;
+      IM.login($('#myid').val(), $('#myid').val(), function (err, msg, uid){
+        if(err) return console.error(err);
+        if(msg) return console.info(msg);
         console.log(uid);
       });
     });
@@ -21,8 +22,12 @@ var fn = function($, _, IM){
       IM.sendMsg($('#fid').val(), $('#msg').val());
     });
 
+    $('#logout').click(function(){
+      IM.logout();
+    });
+
     $('#isLoggedIn').click(function(){
-      IM.isLoggedIn('1', function (uid){
+      IM.isLoggedIn('123456789', function (uid){
         console.log(uid)
       });
     });
