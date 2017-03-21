@@ -5,29 +5,22 @@
  */
 'use strict';
 
-var console = console || { log: function(){ return; } };
-require.config(config);
+define(['jquery'], function ($){
 
-var fn = function($, _, actorClient){
-  // console.log('----');
-  // console.log($)
-  // console.log(_.min([10, 5, 100, 2, 1000]))
-  // console.log(actorClient)
-  // console.log('----');
+  var Model = function(){};
+  var pro = Model.prototype;
 
-  $(function(){
-    $('#login').click(function(){
-      actorClient.login();
-    });
+  pro.login = function(){
+    console.log('login');
+  };
 
-    $('#send').click(function(){
-      actorClient.sendMsg($('#fid').val(), $('#msg').val());
-    });
-  });
-};
+  pro.logout = function(){
+    console.log('logout');
+  };
 
-var err = function(err){
-  console.err(err);
-};
+  pro.sendMsg = function(uid, msg){
+    console.log(uid +':'+ msg);
+  };
 
-require(['jquery', 'underscore', 'actorClient'], fn, err);
+  return new Model();
+});
