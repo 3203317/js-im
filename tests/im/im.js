@@ -10,6 +10,10 @@ define(['jquery', 'underscore', 'promise'], function ($, _, promise){
   var Model = function(){};
   var pro = Model.prototype;
 
+  var toUserString = function(pid, pname){
+    return '&'+ pname +'&'+ pid;
+  };
+
   pro.login = function(pid, pname, cb){
     var self = this;
 
@@ -17,7 +21,7 @@ define(['jquery', 'underscore', 'promise'], function ($, _, promise){
 
       if(uid){
         self.loggedIn = true;
-        console.info('缓存登陆');
+        console.debug('缓存登陆');
         return cb(null, null, uid);
       }
 
@@ -65,10 +69,37 @@ define(['jquery', 'underscore', 'promise'], function ($, _, promise){
     if(localStorage) localStorage.clear();
   };
 
-  pro.sendMsg = function(uid, msg, cb){
+  pro.sendTextMessage = function(peer, msg){
     promise.done(function (client){
-      console.log('sendMsg');
-      cb(true);
+      client.messager.sendMessage(peer, msg);
+    });
+  };
+
+  pro.bindMessages = function(peer, cb){
+    promise.done(function (client){
+      var ret = client.messager.bindMessages(peer, function (msgs){
+        cb(msgs);
+      });
+      ret.initAll();
+    });
+  };
+
+  pro.findUser = function(pid, pname, cb){
+    promise.done(function (client){
+      client.messager.findUsers(toUserString(pid, pname)).then(function (users){
+        if(!users) return cb();
+        cb((1 === users.length) ? users[0] : null);
+      });
+    });
+  };
+
+  pro.findUserPeer = function(pid, pname, cb){
+    var self = this;
+    promise.done(function (client){
+      self.findUser(pid, pname, function (user){
+        if(!user) return cb();
+        cb(client.messager.getUserPeer(user.id));
+      });
     });
   };
 
@@ -83,7 +114,7 @@ define(['jquery', 'underscore', 'promise'], function ($, _, promise){
         }
       }
 
-      cb(null);
+      cb();
     });  // promise
   };
 

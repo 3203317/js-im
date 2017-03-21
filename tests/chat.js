@@ -10,27 +10,55 @@ require.config(config);
 
 var fn = function($, _, IM){
   $(function(){
+
+
+
     $('#login').click(function(){
-      IM.login($('#myid').val(), $('#myid').val(), function (err, msg, uid){
+      IM.login($('#myid').val(), $('#myid').val(), function (err, code, uid){
         if(err) return console.error(err);
-        if(msg) return console.info(msg);
-        console.log(uid);
+        if(code) return console.info(code);
+        console.debug(uid);
       });
     });
 
+
+
     $('#send').click(function(){
-      IM.sendMsg($('#fid').val(), $('#msg').val());
+
+      IM.findUserPeer($('#fid').val(), $('#fid').val(), function (peer){
+        if(!peer) return console.error('not found peer');
+        IM.sendTextMessage(peer, $('#msg').val());
+      });
     });
+
+
 
     $('#logout').click(function(){
       IM.logout();
     });
 
-    $('#isLoggedIn').click(function(){
-      IM.isLoggedIn('123456789', function (uid){
-        console.log(uid)
+
+
+    $('#bind').click(function(){
+      IM.findUserPeer($('#fid').val(), $('#fid').val(), function (peer){
+        if(!peer) return console.error('not found peer');
+
+        IM.bindMessages(peer, function (msgs){
+          console.debug(JSON.stringify(msgs));
+          console.debug(new Date());
+        });
       });
     });
+
+
+
+    $('#isLoggedIn').click(function(){
+      IM.isLoggedIn($('#myid').val(), function (uid){
+        console.debug(uid)
+      });
+    });
+
+
 
   });
 };
