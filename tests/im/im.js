@@ -5,7 +5,35 @@
  */
 'use strict';
 
-define(['jquery', 'underscore'], function ($, _){
+define(['jquery', 'underscore', 'actor'], function ($, _, actor){
+
+  // var config = require('./config');
+ 
+  var deferred = $.Deferred();
+
+  var _client;
+
+  var _starter = function(){
+    _client = new ActorClient();
+    if(!window.Promise){
+      require(['./promise-pollfill'], function(){
+        deferred.resolve(_client);
+      });
+    }else{
+      deferred.resolve(_client);
+    }
+  };
+
+  if(window.isJsAppLoaded){
+    _starter();
+  }else{
+    window.jsAppLoaded = _starter;
+  }
+
+  var ActorClient = function(){
+    this.messager = new window.actor.ActorApp();
+    console.log(this.messager.sendCode)
+  };
 
   var Model = function(){};
   var pro = Model.prototype;
