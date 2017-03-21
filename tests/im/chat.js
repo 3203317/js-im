@@ -17,7 +17,10 @@ var fn = function($, _, im){
 
   $(function(){
     $('#login').click(function(){
-      im.login();
+      im.login($('#myid').val(), $('#myid').val(), function (uid){
+        if(!uid) return;
+        console.log(uid);
+      });
     });
 
     $('#send').click(function(){
@@ -27,7 +30,7 @@ var fn = function($, _, im){
 };
 
 var err = function(err){
-  console.err(err);
+  console.error(err);
 };
 
 require(['jquery', 'underscore', 'im'], fn, err);

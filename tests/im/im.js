@@ -5,13 +5,14 @@
  */
 'use strict';
 
-define(['jquery'], function ($){
+define(['jquery', 'underscore'], function ($, _){
 
   var Model = function(){};
   var pro = Model.prototype;
 
-  pro.login = function(){
-    console.log('login');
+  pro.login = function(pid, pname, cb){
+    console.log(arguments);
+    cb(pid);
   };
 
   pro.logout = function(){
