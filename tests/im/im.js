@@ -5,10 +5,7 @@
  */
 'use strict';
 
-define(['jquery', 'underscore', 'actor'], function ($, _, actor){
-
-  // var config = require('./config');
- 
+define(['jquery', 'underscore', 'actor'], function ($, _){
   var deferred = $.Deferred();
 
   var _client;
@@ -16,7 +13,7 @@ define(['jquery', 'underscore', 'actor'], function ($, _, actor){
   var _starter = function(){
     _client = new ActorClient();
     if(!window.Promise){
-      require(['./promise-pollfill'], function(){
+      require(['promise-pollfill'], function(){
         deferred.resolve(_client);
       });
     }else{
@@ -31,8 +28,11 @@ define(['jquery', 'underscore', 'actor'], function ($, _, actor){
   }
 
   var ActorClient = function(){
-    this.messager = new window.actor.ActorApp();
-    console.log(this.messager.sendCode)
+    var self = this;
+    self.messager = new window.actor.ActorApp();
+    require(['config'], function (config){
+      self.messager.init(config);
+    });
   };
 
   var Model = function(){};
