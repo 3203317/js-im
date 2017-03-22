@@ -10,8 +10,22 @@ define(['jquery', 'underscore', 'promise'], function ($, _, promise){
   var Model = function(){};
   var pro = Model.prototype;
 
-  var toUserString = function(pid, pname){
+  var toUserStr = function(pid, pname){
     return '&'+ pname +'&'+ pid;
+  };
+
+  var fileToBlob = function(file){
+    var arr = file.split(','),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n);
+
+    while(n--){
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new Blob([u8arr], { type: mime });
   };
 
   pro.login = function(uri, pid, pname, cb){
@@ -76,6 +90,24 @@ define(['jquery', 'underscore', 'promise'], function ($, _, promise){
     });
   };
 
+  pro.sendPhotoMessage = function(peer, file, cb){
+    if('function' !== typeof FileReader) return cb(new Error('nonsupport FileReader'));
+
+    promise.done(function (client){
+      var reader = new FileReader();
+      reader.onerror = cb;
+
+      reader.onload = function(e){
+        var blob = fileToBlob(this.result);
+        blob.name = peer.id +'_'+ new Date().getTime();
+        client.messager.sendPhoto(peer, blob);
+        cb();
+      };
+
+      reader.readAsDataURL(file);
+    });
+  };
+
   pro.bindMessages = function(peer, cb){
     promise.done(function (client){
       var ret = client.messager.bindMessages(peer, function (msgs){
@@ -88,7 +120,7 @@ define(['jquery', 'underscore', 'promise'], function ($, _, promise){
   pro.findUser = function(pid, pname, cb){
     if(!this.loggedIn) return cb();
     promise.done(function (client){
-      client.messager.findUsers(toUserString(pid, pname)).then(function (users){
+      client.messager.findUsers(toUserStr(pid, pname)).then(function (users){
         if(!users) return cb();
         cb((1 === users.length) ? users[0] : null);
       });

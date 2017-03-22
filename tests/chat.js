@@ -60,6 +60,24 @@ var fn = function($, _, IM){
 
 
 
+    $('#upload_pic').click(function(){
+      var s = $('#pic_uri');
+      var files = s[0].files;
+
+      if(0 === files.length) return console.error('please select');
+      var file = files[0];
+
+      IM.findUserPeer($('#fid').val(), $('#fid').val(), function (peer){
+        if(!peer) return console.error('not found peer');
+        IM.sendPhotoMessage(peer, file, function (err){
+          if(err) return console.error(err);
+          console.log('success')
+        });
+      });
+    });
+
+
+
   });
 };
 
