@@ -14,7 +14,7 @@ define(['jquery', 'underscore', 'promise'], function ($, _, promise){
     return '&'+ pname +'&'+ pid;
   };
 
-  pro.login = function(pid, pname, cb){
+  pro.login = function(uri, pid, pname, cb){
     var self = this;
 
     self.isLoggedIn(pid, function (uid){
@@ -27,7 +27,7 @@ define(['jquery', 'underscore', 'promise'], function ($, _, promise){
 
       promise.done(function (client){
 
-        $.get('http://10.0.1.249:9090/v1/tokens/'+ pid, {
+        $.get(uri + pid, {
           apiPassword: 'justep-dangchat'
         }, function (token){
 
@@ -66,6 +66,7 @@ define(['jquery', 'underscore', 'promise'], function ($, _, promise){
   };
 
   pro.logout = function(){
+    this.loggedIn = false;
     if(localStorage) localStorage.clear();
   };
 
@@ -85,6 +86,7 @@ define(['jquery', 'underscore', 'promise'], function ($, _, promise){
   };
 
   pro.findUser = function(pid, pname, cb){
+    if(!this.loggedIn) return cb();
     promise.done(function (client){
       client.messager.findUsers(toUserString(pid, pname)).then(function (users){
         if(!users) return cb();
@@ -94,10 +96,9 @@ define(['jquery', 'underscore', 'promise'], function ($, _, promise){
   };
 
   pro.findUserPeer = function(pid, pname, cb){
-    var self = this;
-    promise.done(function (client){
-      self.findUser(pid, pname, function (user){
-        if(!user) return cb();
+    this.findUser(pid, pname, function (user){
+      if(!user) return cb();
+      promise.done(function (client){
         cb(client.messager.getUserPeer(user.id));
       });
     });

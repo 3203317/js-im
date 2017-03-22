@@ -11,10 +11,10 @@ require.config(config);
 var fn = function($, _, IM){
   $(function(){
 
-
+    var uri = 'http://10.0.1.249:9090/v1/tokens/';
 
     $('#login').click(function(){
-      IM.login($('#myid').val(), $('#myid').val(), function (err, code, uid){
+      IM.login(uri, $('#myid').val(), $('#myid').val(), function (err, code, uid){
         if(err) return console.error(err);
         if(code) return console.info(code);
         console.debug(uid);
