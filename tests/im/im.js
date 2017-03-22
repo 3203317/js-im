@@ -108,6 +108,24 @@ define(['jquery', 'underscore', 'promise'], function ($, _, promise){
     });
   };
 
+  pro.sendFileMessage = function(peer, file, cb){
+    if('function' !== typeof FileReader) return cb(new Error('nonsupport FileReader'));
+
+    promise.done(function (client){
+      var reader = new FileReader();
+      reader.onerror = cb;
+
+      reader.onload = function(e){
+        var blob = fileToBlob(this.result);
+        blob.name = peer.id +'_'+ new Date().getTime();
+        client.messager.sendFile(peer, blob);
+        cb();
+      };
+
+      reader.readAsDataURL(file);
+    });
+  };
+
   pro.bindMessages = function(peer, cb){
     promise.done(function (client){
       var ret = client.messager.bindMessages(peer, function (msgs){
