@@ -5,7 +5,7 @@
  */
 'use strict';
 
-define(['jquery', 'underscore', 'actor'], function ($, _){
+define(['jquery', 'underscore', 'actor.min'], function ($, _){
   var deferred = $.Deferred();
 
   var _starter = function(){
